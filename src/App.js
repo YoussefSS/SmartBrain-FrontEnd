@@ -1,23 +1,19 @@
-import logo from './logo.svg';
 import './App.css';
+import Navigation from './components/Navigation/Navigation';
+import Logo from './components/Logo/Logo.js'
+import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm.js"
+import Rank from "./components/Rank/Rank.js"
+import ParticlesBg from 'particles-bg';
+import 'tachyons'
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ParticlesBg color='#ffffff' type="cobweb" bg={true}/> {/* bg sets z-index to -1 */}
+      <Navigation /> {/* Where we'll have our sign out */}
+      <Logo />
+      <Rank />
+      <ImageLinkForm/>
     </div>
   );
 }
