@@ -19,28 +19,26 @@ class App extends React.Component {
     this.state = {
       input: '',
       imageUrl: '',
-      box: {},
+      boxes: [],
     }
   }
 
-  calculateFaceLocation = (data) => {
-    console.log(data.outputs[0].data.regions[0].region_info.bounding_box);
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+  displayFaceBoxes = (data) => {
+    const clarifaiFaces = data.outputs[0].data.regions.map((region) => {return region.region_info.bounding_box});
     const image = document.getElementById('inputimage');
     const width = Number(image.width);
     const height = Number(image.height);
 
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow: height - (clarifaiFace.bottom_row * height)
-    }
-  }
+    const boxes = clarifaiFaces.map((face => {
+      return {
+        leftCol: face.left_col * width,
+        topRow: face.top_row * height,
+        rightCol: width - (face.right_col * width),
+        bottomRow: height - (face.bottom_row * height)
+      }
+    }));
 
-  displayFaceBox = (box) => {
-    console.log(box);
-    this.setState({box: box})
+    this.setState({boxes: boxes})
   }
 
   onInputChange = (event) => {
@@ -58,7 +56,7 @@ class App extends React.Component {
       this.state.input // You have to use input here, not imageUrl .. why?
     )
     .then((response) => {
-      this.displayFaceBox(this.calculateFaceLocation(response));
+      this.displayFaceBoxes(response);
     })
     .catch((err) => {
       console.log(err);
@@ -76,7 +74,7 @@ class App extends React.Component {
         <ImageLinkForm 
           onInputChange={this.onInputChange} 
           onButtonSubmit={this.onButtonSubmit}/>
-        <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
+        <FaceRecognition boxes={this.state.boxes} imageUrl={this.state.imageUrl}/>
       </div>
     );
   }
