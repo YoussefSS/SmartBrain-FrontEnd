@@ -7,6 +7,8 @@ import Rank from "./components/Rank/Rank.js"
 import ParticlesBg from 'particles-bg';
 import Clarifai from 'clarifai'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition.js'
+import SignIn from "./components/SignIn/SignIn.js"
+import Register from "./components/Register/Register.js"
 import 'tachyons'
 
 const app = new Clarifai.App({
@@ -20,6 +22,8 @@ class App extends React.Component {
       input: '',
       imageUrl: '',
       boxes: [],
+      route: 'signin', // keeps track of where we are on the page
+      isSignedIn: false,
     }
   }
 
@@ -48,8 +52,6 @@ class App extends React.Component {
   onButtonSubmit = () => {
     this.setState({imageUrl: this.state.input});
 
-    console.log('click');
-
     app.models
     .predict(
       'f76196b43bbd45c99b4f3cd8e8b40a8a', // This is the face detect model ID
@@ -64,17 +66,39 @@ class App extends React.Component {
 
   }
 
+  onRouteChange = (route) => {
+    if(route === 'signout') {
+      this.setState({isSignedIn: false});
+    } 
+    else if (route === 'home') {
+      this.setState({isSignedIn: true})
+    }
+
+    this.setState({route: route});
+  }
+
   render() {
     return (
       <div className="App">
         <ParticlesBg color='#ffffff' type="cobweb" bg={true}/> {/* bg sets z-index to -1 */}
-        <Navigation /> {/* Where we'll have our sign out */}
-        <Logo />
-        <Rank />
-        <ImageLinkForm 
-          onInputChange={this.onInputChange} 
-          onButtonSubmit={this.onButtonSubmit}/>
-        <FaceRecognition boxes={this.state.boxes} imageUrl={this.state.imageUrl}/>
+
+        <Navigation isSignedIn={this.state.isSignedIn} onRouteChange={this.onRouteChange}/>
+        { this.state.route === 'home' ? 
+            <div><Logo />
+              <Rank />
+              <ImageLinkForm 
+                onInputChange={this.onInputChange} 
+                onButtonSubmit={this.onButtonSubmit}/>
+              <FaceRecognition boxes={this.state.boxes} imageUrl={this.state.imageUrl}/>
+            </div>
+           
+              : (
+                this.state.route === 'signin' ?
+                <SignIn onRouteChange={this.onRouteChange} />
+                : <Register onRouteChange={this.onRouteChange} />
+              )
+           
+         }
       </div>
     );
   }
