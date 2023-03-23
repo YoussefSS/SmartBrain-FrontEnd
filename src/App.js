@@ -24,6 +24,13 @@ class App extends React.Component {
       boxes: [],
       route: 'signin', // keeps track of where we are on the page
       isSignedIn: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: ''
+      }
     }
   }
 
@@ -31,6 +38,16 @@ class App extends React.Component {
     fetch('http://localhost:3000/')
     .then(response => response.json())
     .then(data => console.log(data));
+  }
+
+  loadUser = (data) => {
+    this.setState({user: {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      entries: data.entries,
+      joined: data.joined
+    }})
   }
 
   displayFaceBoxes = (data) => {
@@ -101,7 +118,7 @@ class App extends React.Component {
               : (
                 this.state.route === 'signin' ?
                 <SignIn onRouteChange={this.onRouteChange} />
-                : <Register onRouteChange={this.onRouteChange} />
+                : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
               )
            
          }
