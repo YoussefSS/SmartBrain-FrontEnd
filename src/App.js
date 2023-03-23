@@ -81,6 +81,20 @@ class App extends React.Component {
       this.state.input // You have to use input here, not imageUrl .. why?
     )
     .then((response) => {
+      if(response)
+      {
+        fetch('http://localhost:3000/image', {
+          method: 'put',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+              id: this.state.user.id
+          })
+        })
+        .then(response => response.json())
+        .then(count => {
+          this.setState(Object.assign(this.state.user, {entries:count})) // Object.assign, you pass in the object you want to change, and what you want to change in it
+        })
+      }
       this.displayFaceBoxes(response);
     })
     .catch((err) => {
@@ -108,7 +122,7 @@ class App extends React.Component {
         <Navigation isSignedIn={this.state.isSignedIn} onRouteChange={this.onRouteChange}/>
         { this.state.route === 'home' ? 
             <div><Logo />
-              <Rank />
+              <Rank name={this.state.user.name} entries={this.state.user.entries}/>
               <ImageLinkForm 
                 onInputChange={this.onInputChange} 
                 onButtonSubmit={this.onButtonSubmit}/>
@@ -117,7 +131,7 @@ class App extends React.Component {
            
               : (
                 this.state.route === 'signin' ?
-                <SignIn onRouteChange={this.onRouteChange} />
+                <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
                 : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
               )
            

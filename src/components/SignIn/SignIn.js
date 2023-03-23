@@ -30,8 +30,9 @@ class SignIn extends React.Component {
         })
         .then(response => response.json())
         .then(data => {
-            if(data === 'success') // in our backend, we respond with 'success' if the login is successful
+            if(data.id) // in our backend, we respond with 'success' if the login is successful
             {
+                this.props.loadUser(data);
                 this.props.onRouteChange('home');
             }
         })
