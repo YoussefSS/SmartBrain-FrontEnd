@@ -5,15 +5,10 @@ import Logo from './components/Logo/Logo.js'
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm.js"
 import Rank from "./components/Rank/Rank.js"
 import ParticlesBg from 'particles-bg';
-import Clarifai from 'clarifai'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition.js'
 import SignIn from "./components/SignIn/SignIn.js"
 import Register from "./components/Register/Register.js"
 import 'tachyons'
-
-const app = new Clarifai.App({
-  apiKey: process.env.REACT_APP_CLARIFAI_API_KEY // added to a .env file which is git ignored
-});
 
 const initialState = {
   input: '',
@@ -76,11 +71,14 @@ class App extends React.Component {
   onButtonSubmit = () => {
     this.setState({imageUrl: this.state.input});
 
-    app.models
-    .predict(
-      'f76196b43bbd45c99b4f3cd8e8b40a8a', // This is the face detect model ID
-      this.state.input // You have to use input here, not imageUrl .. why?
-    )
+    fetch('http://localhost:3000/imageurl', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+          input: this.state.input
+      })
+    })
+    .then((response) => response.json())
     .then((response) => {
       if(response)
       {

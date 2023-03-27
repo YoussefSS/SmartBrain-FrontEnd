@@ -37,7 +37,7 @@ class Register extends React.Component {
         })
         .then(response => response.json())
         .then(user => {
-            if(user) // in our backend, we respond with 'success' if the login is successful
+            if(user.id) // checking if there's an id, as in our backend we respond with a json even if the request failed
             {
                 this.props.loadUser(user);
                 this.props.onRouteChange('home');
