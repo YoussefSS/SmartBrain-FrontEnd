@@ -15,23 +15,24 @@ const app = new Clarifai.App({
   apiKey: process.env.REACT_APP_CLARIFAI_API_KEY // added to a .env file which is git ignored
 });
 
+const initialState = {
+  input: '',
+  imageUrl: '',
+  boxes: [],
+  route: 'signin', // keeps track of where we are on the page
+  isSignedIn: false,
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  }
+}
 class App extends React.Component {
   constructor() {
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      boxes: [],
-      route: 'signin', // keeps track of where we are on the page
-      isSignedIn: false,
-      user: {
-        id: '',
-        name: '',
-        email: '',
-        entries: 0,
-        joined: ''
-      }
-    }
+    this.state = initialState;
   }
 
   componentDidMount() {
@@ -94,6 +95,7 @@ class App extends React.Component {
         .then(count => {
           this.setState(Object.assign(this.state.user, {entries:count})) // Object.assign, you pass in the object you want to change, and what you want to change in it
         })
+        .catch((err) => console.log(err));
       }
       this.displayFaceBoxes(response);
     })
@@ -105,7 +107,7 @@ class App extends React.Component {
 
   onRouteChange = (route) => {
     if(route === 'signout') {
-      this.setState({isSignedIn: false});
+      this.setState(initialState);
     } 
     else if (route === 'home') {
       this.setState({isSignedIn: true})
